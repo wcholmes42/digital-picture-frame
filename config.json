@@ -1,0 +1,52 @@
+{
+  "display": {
+    "resolution": [1920, 1080],
+    "slideshow_interval": 30,
+    "transition_effect": "fade",
+    "fullscreen": true,
+    "always_on_top": true
+  },
+  "sources": {
+    "local_paths": [],
+    "unraid_shares": ["P:\\"]
+  },
+  "overlays": {
+    "clock": {
+      "enabled": true,
+      "position": "top-right",
+      "format": "%I:%M %p",
+      "font_size": 48,
+      "color": [255, 255, 255, 200]
+    },
+    "date": {
+      "enabled": true,
+      "position": "top-left",
+      "format": "%A, %B %d, %Y",
+      "font_size": 48,
+      "color": [255, 255, 255, 200]
+    },
+    "weather": {
+      "enabled": false,
+      "position": "bottom-left",
+      "api_key": "",
+      "location": "Pahrump,NV,US",
+      "units": "imperial",
+      "font_size": 28,
+      "color": [255, 255, 255, 200]
+    },
+    "system_stats": {
+      "enabled": false,
+      "position": "bottom-right",
+      "show_cpu": true,
+      "show_memory": true,
+      "show_temp": false,
+      "font_size": 24,
+      "color": [255, 255, 255, 200]
+    }
+  },
+  "web_ui": {
+    "enabled": true,
+    "port": 5000,
+    "host": "0.0.0.0"
+  }
+}
