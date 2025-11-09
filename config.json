@@ -4,7 +4,10 @@
     "slideshow_interval": 30,
     "transition_effect": "fade",
     "fullscreen": true,
-    "always_on_top": true
+    "always_on_top": true,
+    "enable_power_save": false,
+    "power_save_slideshow_duration": 60,
+    "power_save_blank_duration": 30
   },
   "sources": {
     "local_paths": [],

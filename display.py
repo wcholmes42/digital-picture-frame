@@ -23,8 +23,9 @@ class PictureFrameDisplay:
     
     def __init__(self, config_path="config.json"):
         # Load configuration
-        with open(config_path) as f:
-            self.config = json.load(f)
+        self.config_path = config_path
+        self.config_mtime = 0
+        self.load_config()
         
         # Initialize pygame
         pygame.init()
@@ -53,8 +54,8 @@ class PictureFrameDisplay:
         # Blank/power save mode
         self.blank_mode = False
         self.mode_start_time = time.time()
-        self.slideshow_duration = 60  # 60 seconds of slideshow before blanking
-        self.blank_duration = 30  # 30 seconds blank
+        self.slideshow_duration = 999999999  # Will be set by load_config()
+        self.blank_duration = 30  # Will be set by load_config()
         
         # Load images from sources
         self.load_images()
@@ -92,6 +93,42 @@ class PictureFrameDisplay:
         except Exception as e:
             print(f"Failed to turn on monitor: {e}")
         
+    def load_config(self):
+        """Load or reload configuration from file"""
+        try:
+            with open(self.config_path) as f:
+                self.config = json.load(f)
+            self.config_mtime = os.path.getmtime(self.config_path)
+            
+            # Update display settings
+            display_config = self.config['display']
+            self.interval = display_config['slideshow_interval']
+            
+            # Update power save settings
+            if display_config.get('enable_power_save', False):
+                self.slideshow_duration = display_config.get('power_save_slideshow_duration', 60)
+                self.blank_duration = display_config.get('power_save_blank_duration', 30)
+            else:
+                self.slideshow_duration = 999999999  # Effectively disabled
+                self.blank_duration = 30
+                
+            print(f"Config reloaded - interval: {self.interval}s, power save: {display_config.get('enable_power_save', False)}")
+        except Exception as e:
+            print(f"Error loading config: {e}")
+    
+    def check_config_changes(self):
+        """Check if config file has been modified and reload if needed"""
+        try:
+            current_mtime = os.path.getmtime(self.config_path)
+            if current_mtime != self.config_mtime:
+                print("Config file changed - reloading...")
+                self.load_config()
+                self.load_images()  # Reload images if sources changed
+                return True
+        except Exception as e:
+            print(f"Error checking config: {e}")
+        return False
+    
     def load_images(self):
         """Scan all configured sources for images"""
         self.image_list = []
@@ -543,6 +580,9 @@ class PictureFrameDisplay:
                         self.interval = self.config['display']['slideshow_interval']
                         self.load_images()
                         self.current_image = self.load_current_image()
+            
+            # Check for config file changes (live reload)
+            self.check_config_changes()
             
             # Check if time to switch between slideshow and blank mode
             time_in_mode = time.time() - self.mode_start_time
