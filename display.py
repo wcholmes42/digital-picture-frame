@@ -534,6 +534,9 @@ class PictureFrameDisplay:
         """Main display loop"""
         running = True
         
+        # Hide mouse cursor during slideshow
+        pygame.mouse.set_visible(False)
+        
         # Load first image
         if self.image_list:
             self.current_image = self.load_current_image()
@@ -542,6 +545,7 @@ class PictureFrameDisplay:
             # Handle events
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    pygame.mouse.set_visible(True)
                     running = False
                 elif event.type == pygame.KEYDOWN:
                     print(f"Key pressed: {event.key}")  # Debug key code
@@ -555,6 +559,8 @@ class PictureFrameDisplay:
                         self.last_change = time.time()
                     
                     if event.key == pygame.K_ESCAPE:
+                        # Show mouse cursor before exiting
+                        pygame.mouse.set_visible(True)
                         running = False
                     elif event.key == pygame.K_SPACE:
                         print("Space pressed - advancing image")
